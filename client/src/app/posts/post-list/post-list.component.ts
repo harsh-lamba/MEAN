@@ -17,7 +17,8 @@ export class PostList implements OnInit, OnDestroy {
   public posts: Post[]
 
   public ngOnInit(){
-    this.updatePosts();
+    //TODO: Create async object
+    this.postService.getPosts();
 
     this._subscription = this.postService.postCreated.subscribe(()=>{
       this.updatePosts();
