@@ -18,5 +18,15 @@ export class PostCreate{
   @Output()
   public readonly postCreated: EventEmitter<Post>;
 
+  public addPost(postForm: NgForm){
+    if (postForm.invalid) return;
+
+    const post:Post = {
+      title: postForm.value.title,
+      description: postForm.value.description
+    }
+
+    this.postCreated.emit(post)
+  }
 
 }
