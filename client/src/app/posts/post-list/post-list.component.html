@@ -7,7 +7,12 @@
       <mat-panel-description>
         {{post.description}}
       </mat-panel-description>
+
     </mat-expansion-panel-header>
+    <mat-action-row>
+      <button mat-button color="primary">EDIT</button>
+      <button mat-button color="primary">DELETE</button>
+    </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
 <div *ngIf="posts.length === 0"> No Post to display</div>
