@@ -30,9 +30,12 @@ export class PostService {
     };
 
     this.http
-      .post<{message: string, postId: string}>('http://localhost:4000/api/post', {
-        post: post,
-      })
+      .post<{ message: string; postId: string }>(
+        'http://localhost:4000/api/posts',
+        {
+          post: post,
+        }
+      )
       .subscribe((res) => {
         const id = res.postId;
         post.id = id;
@@ -62,12 +65,35 @@ export class PostService {
       });
   }
 
+  public getPost(id: string) {
+    return this.http
+      .get<{ post: { _id: string; title: string; description: string } }>(
+        `http://localhost:4000/api/posts/${id}`
+      )
+      .pipe(
+        map((result) => {
+          return <Post>{ id: result.post._id, title: result.post.title, description: result.post.description };
+        })
+      );
+  }
+
+  public updatePost(id: string, title: string, description: string) {
+    const post: Post = { id, title, description };
+    this.http
+      .put(`http://localhost:4000/api/posts/${id}`, post)
+      .subscribe((response) => {
+        console.log(response);
+      });
+  }
+
   public deletePost(id: string): void {
-    this.http.delete(`http://localhost:4000/api/posts/${id}`).subscribe((response)=>{
-      console.log(response);
-      const updatedPost = this._posts.filter(post => post.id !== id);
-      this._posts = updatedPost;
-      this._postCreated.next();
-    })
+    this.http
+      .delete(`http://localhost:4000/api/posts/${id}`)
+      .subscribe((response) => {
+        console.log(response);
+        const updatedPost = this._posts.filter((post) => post.id !== id);
+        this._posts = updatedPost;
+        this._postCreated.next();
+      });
   }
 }

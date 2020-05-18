@@ -1,0 +1,13 @@
+ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+:host a{
+  color: #fff
+}
+
+ul, span{
+flex: 1 1 auto
+}

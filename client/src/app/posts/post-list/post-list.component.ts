@@ -10,6 +10,7 @@ import { PostService } from '../post.service';
 })
 export class PostList implements OnInit, OnDestroy {
   private _subscription: Subscription;
+  public isLoader: boolean;
   constructor(private postService: PostService){
     this.posts = [];
   }
@@ -17,11 +18,13 @@ export class PostList implements OnInit, OnDestroy {
   public posts: Post[]
 
   public ngOnInit(){
+    this.isLoader = true;
     //TODO: Create async object
     this.postService.getPosts();
 
     this._subscription = this.postService.postCreated.subscribe(()=>{
       this.updatePosts();
+      this.isLoader = false;
     })
   }
 
