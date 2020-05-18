@@ -25,6 +25,10 @@ export class PostList implements OnInit, OnDestroy {
     })
   }
 
+  public deletePost(id: string){
+    this.postService.deletePost(id);
+  }
+
   private updatePosts(){
     this.posts = this.postService.posts
   }
