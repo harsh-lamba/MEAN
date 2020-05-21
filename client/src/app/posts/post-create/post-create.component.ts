@@ -53,13 +53,15 @@ export class PostCreate implements OnInit {
     if (this.mode === 'create') {
       this.postService.addPost(
         this.postForm.get('title').value,
-        this.postForm.get('description').value
+        this.postForm.get('description').value,
+        this.postForm.get('image').value
       );
     } else {
       this.postService.updatePost(
         this.postForm.get('id').value,
         this.postForm.get('title').value,
-        this.postForm.get('description').value
+        this.postForm.get('description').value,
+        // this.postForm.get('image').value
       );
     }
 

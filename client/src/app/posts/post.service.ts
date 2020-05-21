@@ -22,24 +22,24 @@ export class PostService {
     return this._postCreated.asObservable();
   }
 
-  public addPost(title: string, description: string) {
-    const post = <Post>{
-      id: null,
-      title: title,
-      description: description,
-    };
+  public addPost(title: string, description: string, image: File) {
+    const postData = new FormData();
+    postData.append("title", title);
+    postData.append("description", description);
+    postData.append("image", image, title);
 
     this.http
-      .post<{ message: string; postId: string }>(
+      .post<{ message: string; post: Post }>(
         'http://localhost:4000/api/posts',
-        {
-          post: post,
-        }
+        postData
       )
       .subscribe((res) => {
-        const id = res.postId;
-        post.id = id;
-        this._posts.push(post);
+        this._posts.push({
+          id: res.post.id,
+          title: title,
+          description: description,
+          imagePath: res.post.imagePath
+        });
         this._postCreated.next();
       });
   }
@@ -54,12 +54,12 @@ export class PostService {
               id: post._id,
               title: post.title,
               description: post.description,
+              imagePath: post.imagePath,
             };
           });
         })
       )
       .subscribe((transformedPost) => {
-        console.log(transformedPost);
         this._posts = transformedPost;
         this._postCreated.next();
       });
@@ -67,18 +67,28 @@ export class PostService {
 
   public getPost(id: string) {
     return this.http
-      .get<{ post: { _id: string; title: string; description: string } }>(
-        `http://localhost:4000/api/posts/${id}`
-      )
+      .get<{
+        post: {
+          _id: string;
+          title: string;
+          description: string;
+          imagePath: string;
+        };
+      }>(`http://localhost:4000/api/posts/${id}`)
       .pipe(
         map((result) => {
-          return <Post>{ id: result.post._id, title: result.post.title, description: result.post.description };
+          return <Post>{
+            id: result.post._id,
+            title: result.post.title,
+            description: result.post.description,
+            imagePath: result.post.imagePath,
+          };
         })
       );
   }
 
   public updatePost(id: string, title: string, description: string) {
-    const post: Post = { id, title, description };
+    const post: Post = { id, title, description, imagePath:null };
     this.http
       .put(`http://localhost:4000/api/posts/${id}`, post)
       .subscribe((response) => {
