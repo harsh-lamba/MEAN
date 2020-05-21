@@ -6,3 +6,15 @@
 .full-width{
   width: 100%
 }
+
+input[type="file"]{
+  visibility: hidden;
+}
+
+.image{
+  height: 3rem;
+}
+
+.image img{
+  height: 100%;
+}
