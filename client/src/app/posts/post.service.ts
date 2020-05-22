@@ -49,6 +49,7 @@ export class PostService {
       .get<{ message: string; posts: any }>('http://localhost:4000/api/posts')
       .pipe(
         map((result) => {
+          console.log(result);
           return result.posts.map((post) => {
             return {
               id: post._id,
@@ -87,12 +88,37 @@ export class PostService {
       );
   }
 
-  public updatePost(id: string, title: string, description: string) {
-    const post: Post = { id, title, description, imagePath:null };
+  public updatePost(id: string, title: string, description: string, image: File | string) {
+    let postData: Post | FormData;
+    if (typeof image === "object") {
+      postData = new FormData();
+      postData.append("id", id);
+      postData.append("title", title);
+      postData.append("description", description);
+      postData.append("image", image, title);
+    } else {
+      postData = {
+        id: id,
+        title: title,
+        description: description,
+        imagePath: image
+      };
+    }
+
     this.http
-      .put(`http://localhost:4000/api/posts/${id}`, post)
+      .put(`http://localhost:4000/api/posts/${id}`, postData)
       .subscribe((response) => {
-        console.log(response);
+        const updatedPosts = [...this._posts];
+        const oldPostIndex = updatedPosts.findIndex(p => p.id === id);
+        const post: Post = {
+          id: id,
+          title: title,
+          description: description,
+          imagePath: ""
+        };
+        updatedPosts[oldPostIndex] = post;
+        this._posts = updatedPosts;
+        this._postCreated.next();
       });
   }
 

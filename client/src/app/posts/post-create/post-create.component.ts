@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 import { PostService } from '../post.service';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Post } from '../post.interface';
 import { MiMeTypeValidator } from './mime-type.validator';
 
@@ -38,6 +38,7 @@ export class PostCreate implements OnInit {
             id: post.id,
             title: post.title,
             description: post.description,
+            image: post.imagePath
           });
         });
       } else {
@@ -52,16 +53,16 @@ export class PostCreate implements OnInit {
 
     if (this.mode === 'create') {
       this.postService.addPost(
-        this.postForm.get('title').value,
-        this.postForm.get('description').value,
-        this.postForm.get('image').value
+        this.postForm.value.title,
+        this.postForm.value.description,
+        this.postForm.value.image
       );
     } else {
       this.postService.updatePost(
-        this.postForm.get('id').value,
-        this.postForm.get('title').value,
-        this.postForm.get('description').value,
-        // this.postForm.get('image').value
+        this.postForm.value.id,
+        this.postForm.value.title,
+        this.postForm.value.description,
+        this.postForm.value.image
       );
     }
 
@@ -69,11 +70,10 @@ export class PostCreate implements OnInit {
     this.router.navigate(['/']);
   }
 
-  public onImageChange(event: MouseEvent) {
-    const target = event.target;
-    const file = (target as HTMLInputElement).files[0];
+  public onImageChange(event: Event) {
+    const file = (event.target as HTMLInputElement).files[0];
     this.postForm.patchValue({ image: file });
-    this.postForm.updateValueAndValidity();
+    this.postForm.get("image").updateValueAndValidity();
 
     const fileReader = new FileReader();
     fileReader.onload = () => {

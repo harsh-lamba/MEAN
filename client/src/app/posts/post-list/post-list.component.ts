@@ -6,7 +6,8 @@ import { PostService } from '../post.service';
 
 @Component({
   selector: 'app-post-list',
-  templateUrl: './post-list.component.html'
+  templateUrl: './post-list.component.html',
+  styleUrls: ['./post-list.component.css']
 })
 export class PostList implements OnInit, OnDestroy {
   private _subscription: Subscription;
@@ -22,18 +23,15 @@ export class PostList implements OnInit, OnDestroy {
     //TODO: Create async object
     this.postService.getPosts();
 
-    this._subscription = this.postService.postCreated.subscribe(()=>{
-      this.updatePosts();
+    this._subscription = this.postService.postCreated
+    .subscribe(()=>{
       this.isLoader = false;
+      this.posts = this.postService.posts
     })
   }
 
   public deletePost(id: string){
     this.postService.deletePost(id);
-  }
-
-  private updatePosts(){
-    this.posts = this.postService.posts
   }
 
   public ngOnDestroy(){

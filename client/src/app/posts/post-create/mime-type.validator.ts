@@ -1,9 +1,13 @@
-import { Observable, Observer } from 'rxjs';
+import { Observable, Observer, of } from 'rxjs';
 import { AbstractControl } from '@angular/forms';
 
 export const MiMeTypeValidator = (
   control: AbstractControl
 ): Promise<{ [key: string]: any }> | Observable<{ [key: string]: any }> => {
+  if (typeof(control.value) === 'string') {
+    return of(null);
+  }
+
   const file = control.value as File;
   const fileReader =  new FileReader();
   let loadEndCallBack;
@@ -37,15 +41,11 @@ export const MiMeTypeValidator = (
         observer.next({ invalidMimeType: true });
       }
       observer.complete();
-      unsubscriber();
+      fileReader.removeEventListener('loadend', loadEndCallBack);
     }
     fileReader.addEventListener('loadend', loadEndCallBack)
     fileReader.readAsArrayBuffer(file);
   })
-
-  const unsubscriber = () => {
-    fileReader.removeEventListener('loadend', loadEndCallBack)
-  }
 
   return frOb;
 };
